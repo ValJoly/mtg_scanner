@@ -20,6 +20,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+      body: IndexedStack(
+        index: curentIndex,
+        children: pages,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: curentIndex,
@@ -38,7 +42,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           ),
         ],
       ),
-      body: pages[curentIndex],
     );
   }
 
