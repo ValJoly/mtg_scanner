@@ -17,6 +17,10 @@ dependencies:
   path_provider: ^2.1.4
   path: ^1.9.0
   image: ^4.3.0
+  sembast: ^3.7.5
+  flutter_slidable: ^3.1.1
+  flutter_svg: ^2.0.10+1
+  expandable_page_view: ^1.0.17
 
 dev_dependencies:
   flutter_test:
@@ -25,3 +29,16 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+# add fonts from the assets folder
+  assets:
+    - assets/
+    - assets/icons/
+    - assets/icons/mana_costs/
+
+# add fonts from the fonts folder
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Medium.ttf
+        - asset: assets/fonts/Poppins-Light.ttf

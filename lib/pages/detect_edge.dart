@@ -2,13 +2,16 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:edge_detection/edge_detection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
+import 'package:mtg_scanner/models/cards_list.dart' as mtg;
+import 'package:mtg_scanner/widgets/list_tiles.dart';
 import 'package:ocr_scan_text/ocr_scan_text.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:scryfall_api/scryfall_api.dart';
 
 import 'scan_all_module.dart';
 
@@ -19,19 +22,21 @@ class DetectEdge extends StatefulWidget {
   State<DetectEdge> createState() => _DetectEdgeState();
 }
 
-class _DetectEdgeState extends State<DetectEdge> {
+class _DetectEdgeState extends State<DetectEdge>
+    with AutomaticKeepAliveClientMixin {
   String? currentImageUri;
 
   String currentName = '';
-
+  mtg.CardsList? resultCardsList;
   String? findImageUrl;
 
   bool isBusy = false;
 
-  MtgCard? currentMtgCard;
+  var selectedSegment = 0;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
@@ -40,19 +45,31 @@ class _DetectEdgeState extends State<DetectEdge> {
               heroTag: 'fullAuto',
               onPressed: fullAuto,
               child: const Icon(Icons.auto_awesome)),
-          const SizedBox(height: 16),
-          FloatingActionButton(
-            heroTag: 'deleteImage',
-            onPressed: () {
-              setState(() {
-                currentImageUri = null;
-                currentName = '';
-                findImageUrl = null;
-              });
-            },
-            child: const Icon(Icons.delete_forever),
-          ),
           // const SizedBox(height: 16),
+          // FloatingActionButton(
+          //   heroTag: 'deleteImage',
+          //   onPressed: () {
+          //     setState(() {
+          //       currentImageUri = null;
+          //       currentName = '';
+          //       findImageUrl = null;
+          //     });
+          //   },
+          //   child: const Icon(Icons.delete_forever),
+          // ),
+
+          // FloatingActionButton(
+          //   onPressed: () {
+          //     http
+          //         .get(Uri.parse(
+          //             'https://api.scryfall.com/cards/search?q=Désinvocation&include_multilingual=true&pretty=true'))
+          //         .then((response) {
+          //       log('Response status: ${response.statusCode}');
+          //       log('Response body: ${response.body}');
+          //     });
+          //   },
+          //   child: const Icon(Icons.search),
+          // ),
           // FloatingActionButton(
           //   heroTag: 'searchCard',
           //   onPressed: search,
@@ -77,32 +94,46 @@ class _DetectEdgeState extends State<DetectEdge> {
           // ),
         ],
       ),
-      body: Center(
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                currentImageUri != null || findImageUrl != null
-                    ? Expanded(
-                        child: (findImageUrl != null && findImageUrl != '')
-                            ? Image.network(findImageUrl!)
-                            : Image.file(
-                                File(currentImageUri!),
-                                fit: BoxFit.contain,
-                              ),
-                      )
-                    : Container(),
-                const Text('Detect Edge'),
-              ],
-            ),
-            if (isBusy)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: const Center(
-                  child: CircularProgressIndicator(),
-                ),
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 16,
               ),
-          ],
+              // segmented control to switch between small and big cards
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: CupertinoSlidingSegmentedControl(
+                        children: const {
+                          0: Icon(Icons.list_alt_rounded),
+                          1: Icon(Icons.image_outlined),
+                        },
+                        onValueChanged: (int? val) {
+                          if (val == null) {
+                            return;
+                          }
+                          selectedSegment = val;
+                          setState(() {});
+                        },
+                        groupValue: selectedSegment,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              cardList(
+                context,
+                resultCardsList?.data ?? [],
+                small: selectedSegment == 0,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -204,6 +235,15 @@ class _DetectEdgeState extends State<DetectEdge> {
       await Future.delayed(const Duration(milliseconds: 100));
       log('Waiting for scan to finish');
     }
+    getApplicationSupportDirectory().then((value) {
+      var dir = Directory(value.path);
+      dir.list().listen((event) {
+        if (event.path.endsWith('.jpeg') || event.path.endsWith('.jpg')) {
+          log('Deleting: ${event.path}');
+          event.delete();
+        }
+      });
+    });
   }
 
   Future<void> cropImageHalf({
@@ -255,22 +295,24 @@ class _DetectEdgeState extends State<DetectEdge> {
 
   Future<void> search() async {
     log('searching');
-    final apiClient = ScryfallApiClient();
-    try {
-      MtgCard card = await apiClient.getCardByName(
-        currentName,
-        searchType: SearchType.fuzzy,
-      );
+    http
+        .get(Uri.parse(
+            'https://api.scryfall.com/cards/search?q=$currentName&unique=cards&include_multilingual=true'))
+        .then((response) {
+      log('Response status: ${response.statusCode}');
+      // log('Response body: ${response.body}');
 
-      log('${card.manaCost} - ${card.keywords}');
-      log('${card.name} - ${card.imageUris?.borderCrop}');
-      findImageUrl = card.imageUris?.large.toString();
-      currentMtgCard = card;
-      log(card.toString());
-      setState(() {});
-    } catch (e) {
-      log('error : ${(e as ScryfallException).details}');
-    }
+      mtg.CardsList cardsList = mtg.CardsList.fromRawJson(response.body);
+      if (cardsList.data.isNotEmpty) {
+        findImageUrl = cardsList.data.first.imageUris.large.toString();
+        resultCardsList = cardsList;
+        for (var element in cardsList.data) {
+          log('Card name: ${element.name}');
+          log('Card id: ${element.id}');
+        }
+        setState(() {});
+      }
+    });
   }
 
   Future<void> fullAuto() async {
@@ -285,8 +327,24 @@ class _DetectEdgeState extends State<DetectEdge> {
     await read();
     // await Future.delayed(const Duration(milliseconds: 700));
     await search();
+    log('rssult card list length: ${resultCardsList!.data.length}');
+    if (resultCardsList?.data.length == 1) {
+      selectedSegment = 1;
+      addToDB(resultCardsList!.data.first);
+    }
     setState(() {
       isBusy = false;
     });
   }
+
+  void addToDB(mtg.Card card) {
+    log('Adding card to database');
+    log('Card id: ${card.id}');
+
+    // add card to database with a quantity of 1 or increment the quantity
+    // use sembast to store the data
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }
