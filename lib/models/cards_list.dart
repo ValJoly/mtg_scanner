@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class CardsList {
   String object;
-  int totalCards;
+  int? totalCards;
   bool hasMore;
   List<Card> data;
 
@@ -61,7 +61,7 @@ class CardQuantity {
 class Card {
   String object;
   String id;
-  String oracleId;
+  String? oracleId;
   List<int> multiverseIds;
   String name;
   String printedName;

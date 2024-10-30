@@ -54,5 +54,17 @@
 	<string>Can I use the photos please?</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Can I use the photos please?</string>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>

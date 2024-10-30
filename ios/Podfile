@@ -36,6 +36,7 @@ target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths
+    use_frameworks!
   end
 end
 
@@ -53,6 +54,9 @@ post_install do |installer|
 
         ## dart: PermissionGroup.mediaLibrary
         # 'PERMISSION_MEDIA_LIBRARY=1',
+
+        ## dart: PermissionGroup.storage
+        'PERMISSION_STORAGE=1',
         ]
     end
     flutter_additional_ios_build_settings(target)

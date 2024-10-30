@@ -29,25 +29,30 @@ class _CollectionState extends State<Collection> {
       body: Center(
         child: isBusy == true
             ? const CircularProgressIndicator()
-            : ListView.builder(
-                itemCount: collection.length,
-                itemBuilder: (context, index) {
-                  final card = collection[index];
-                  return InkWell(
-                    child: CollectionCard(card: card),
-                    onTap: () {
-                      // vibrate the device to give feedback
-                      HapticFeedback.mediumImpact();
-                      // go to the card details page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return CardDetails(card.card!);
-                        }),
-                      );
-                    },
-                  );
+            : RefreshIndicator.adaptive(
+                onRefresh: () {
+                  return getCollection();
                 },
+                child: ListView.builder(
+                  itemCount: collection.length,
+                  itemBuilder: (context, index) {
+                    final card = collection[index];
+                    return InkWell(
+                      child: CollectionCard(card: card),
+                      onTap: () {
+                        // vibrate the device to give feedback
+                        HapticFeedback.mediumImpact();
+                        // go to the card details page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return CardDetails(card.card!);
+                          }),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
       ),
     );
