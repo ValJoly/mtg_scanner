@@ -6,6 +6,7 @@ import '/database/database.dart';
 import '../models/cards_list.dart';
 
 class DBLogic {
+  // ignore: non_constant_identifier_names
   static String STORE = 'cards';
   Future<Database> get db async => await CardDB.instance.db;
   final _cards = intMapStoreFactory.store(STORE);
@@ -22,7 +23,7 @@ class DBLogic {
         log('Record value is not null');
         // create a card quantity object from the record value
         var tmp2 = CardQuantity.fromJson(record.value as Map<String, dynamic>);
-        log('card id: ${tmp2.card?.id}');
+        // log('card id: ${tmp2.card?.id}');
         return tmp2.card?.id == card.card?.id;
       }),
     );
@@ -30,7 +31,7 @@ class DBLogic {
     if (snapshot != null) {
       log('Card already exists in the database, updating quantity');
       final cardQuantity = CardQuantity.fromJson(snapshot.value);
-      cardQuantity.quantity += 1;
+      cardQuantity.quantity += card.quantity;
       await update(cardQuantity);
       return;
     } else {
@@ -43,6 +44,12 @@ class DBLogic {
     if (card.card?.id == null) {
       throw Exception('Cannot update card without id');
     }
+    // check if quantity is 0, if so, delete the card
+    if (card.quantity <= 0) {
+      await delete(card.card!);
+      log('Card quantity is 0, deleting card');
+      return;
+    }
     final finder = Finder(filter: Filter.custom((record) {
       // log('beep boop: ${record.value}');
       if (record.value == null) {
@@ -52,7 +59,7 @@ class DBLogic {
       log('Record value is not null');
       // create a card quantity object from the record value
       var tmp2 = CardQuantity.fromJson(record.value as Map<String, dynamic>);
-      log('card id: ${tmp2.card?.id}');
+      // log('card id: ${tmp2.card?.id}');
       return tmp2.card?.id == card.card?.id;
     }));
 
@@ -63,10 +70,7 @@ class DBLogic {
     );
   }
 
-  Future delete(CardQuantity card) async {
-    if (card.card?.id == null) {
-      throw Exception('Cannot delete card without id');
-    }
+  Future delete(Card card) async {
     final finder = Finder(
       filter: Filter.custom((record) {
         // log('beep boop: ${record.value}');
@@ -77,8 +81,8 @@ class DBLogic {
         log('Record value is not null');
         // create a card quantity object from the record value
         var tmp2 = CardQuantity.fromJson(record.value as Map<String, dynamic>);
-        log('card id: ${tmp2.card?.id}');
-        return tmp2.card?.id == card.card?.id;
+        // log('card id: ${tmp2.card?.id}');
+        return tmp2.card?.id == card.id;
       }),
     );
 
@@ -99,7 +103,7 @@ class DBLogic {
         log('Record value is not null');
         // create a card quantity object from the record value
         var tmp2 = CardQuantity.fromJson(record.value as Map<String, dynamic>);
-        log('card id: ${tmp2.card?.id}');
+        // log('card id: ${tmp2.card?.id}');
         return tmp2.card?.id == id;
       }),
     );
@@ -130,7 +134,7 @@ class DBLogic {
         log('Record value is not null');
         // create a card quantity object from the record value
         var tmp2 = CardQuantity.fromJson(record.value as Map<String, dynamic>);
-        log('card id: ${tmp2.card?.id}');
+        // log('card id: ${tmp2.card?.id}');
         return tmp2.card?.id == id;
       }),
     );

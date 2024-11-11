@@ -27,7 +27,7 @@ class _CardDetailsState extends State<CardDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.card.name),
+        title: Text(widget.card.printedName ?? widget.card.name),
       ),
       body: Center(
         child: ListView(
@@ -36,7 +36,7 @@ class _CardDetailsState extends State<CardDetails> {
               padding: const EdgeInsets.all(16.0),
               child: Image.network(widget.card.imageUris.large),
             ),
-            Text(widget.card.name),
+            Text(widget.card.printedName ?? widget.card.name),
             ExpansionTile(
               title: const Text('Card Details'),
               children: [
@@ -47,6 +47,14 @@ class _CardDetailsState extends State<CardDetails> {
                 ListTile(
                   title: const Text('Rarity'),
                   subtitle: Text(widget.card.rarity),
+                ),
+                ListTile(
+                  title: const Text('Oracle Text'),
+                  subtitle: Text(widget.card.oracleText ?? 'No Oracle Text'),
+                ),
+                ListTile(
+                  title: const Text('Flavor Text'),
+                  subtitle: Text(widget.card.flavorText ?? 'No Flavor Text'),
                 ),
                 ListTile(
                   title: const Text('Set'),
@@ -177,7 +185,6 @@ class _CardDetailsState extends State<CardDetails> {
           printGroupsLang[print.lang?.toUpperCase() ?? 'no lang'] = [];
         }
         printGroupsLang[print.lang?.toUpperCase() ?? 'no lang']!.add(print);
-        log('Added print to ${print.lang ?? 'no lang'}');
       }
 
       // order map by key (language) with FR first and 'no lang' last

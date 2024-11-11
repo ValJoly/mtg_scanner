@@ -64,7 +64,7 @@ class Card {
   String? oracleId;
   List<int> multiverseIds;
   String name;
-  String printedName;
+  String? printedName;
   String lang;
   DateTime releasedAt;
   String uri;
@@ -76,7 +76,7 @@ class Card {
   String manaCost;
   double cmc;
   String typeLine;
-  String oracleText;
+  String? oracleText;
   List<String> colors;
   List<String> colorIdentity;
   List<dynamic> keywords;
@@ -112,7 +112,7 @@ class Card {
   bool textless;
   bool booster;
   bool storySpotlight;
-  int edhrecRank;
+  int? edhrecRank;
   Prices prices;
   RelatedUris relatedUris;
   PurchaseUris purchaseUris;
@@ -195,7 +195,7 @@ class Card {
         oracleId: json["oracle_id"],
         multiverseIds: List<int>.from(json["multiverse_ids"].map((x) => x)),
         name: json["name"],
-        printedName: json["printed_name"] ?? '',
+        printedName: json["printed_name"],
         lang: json["lang"],
         releasedAt: DateTime.parse(json["released_at"]),
         uri: json["uri"],
@@ -235,7 +235,8 @@ class Card {
         rarity: json["rarity"],
         cardBackId: json["card_back_id"],
         artist: json["artist"],
-        artistIds: List<String>.from(json["artist_ids"].map((x) => x)),
+        artistIds:
+            List<String>.from(json["artist_ids"]?.map((x) => x).toList() ?? []),
         illustrationId: json["illustration_id"],
         borderColor: json["border_color"],
         frame: json["frame"],
