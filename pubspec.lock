@@ -116,10 +116,9 @@ packages:
   edge_detection:
     dependency: "direct main"
     description:
-      name: edge_detection
-      sha256: "515bc8b797382f567fd27f2ac972b804077e616865b071a8f6abb568c6aaac4e"
-      url: "https://pub.dev"
-    source: hosted
+      path: "sources/edge_detection"
+      relative: true
+    source: path
     version: "1.1.3"
   expandable_page_view:
     dependency: "direct main"
@@ -443,8 +442,8 @@ packages:
   ocr_scan_text:
     dependency: "direct main"
     description:
-      path: "/Users/valentinjoly/Development/ocr_scan_text"
-      relative: false
+      path: "sources/ocr_scan_text"
+      relative: true
     source: path
     version: "1.3.1"
   path:

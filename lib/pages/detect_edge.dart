@@ -249,8 +249,9 @@ class _DetectEdgeState extends State<DetectEdge>
     var split = bottomText.split(' ');
     // remove empty strings
     split.removeWhere((element) => element.isEmpty);
-    // remove special characters
-    split = split.map((e) => e.replaceAll(RegExp(r'[^\w\s]'), '')).toList();
+    // // remove special characters
+    // split = split.map((e) => e.replaceAll(RegExp(r'[^\w\s]'), '')).toList();
+
     // separate the set code name from the collector number from the language
     // set code name is always 3 characters
     // language is always 2 characters
@@ -272,8 +273,8 @@ class _DetectEdgeState extends State<DetectEdge>
     collectorNumber = collectorNumber.replaceAll(RegExp(r'^\D+'), '');
     // remove trailing non digits
     collectorNumber = collectorNumber.replaceAll(RegExp(r'\D+$'), '');
-    // // remove leading zeros
-    // collectorNumber = collectorNumber.replaceAll(RegExp(r'^0+'), '');
+    // remove things after / if any
+    collectorNumber = collectorNumber.split('/').first;
     return {
       'language': language,
       'setCode': setCode,
@@ -382,10 +383,11 @@ class _DetectEdgeState extends State<DetectEdge>
     log('searching');
     Map<String, dynamic> bottomLeftScanResult =
         getBottomScanResult(currentSetName!);
-    // check if collector number is 4 digits long
+    // check if collector number is only digits
+
     // check if set code is 3 characters long
     // check if language is 2 characters long
-    if (!(bottomLeftScanResult['collectorNumber'].length != 4 ||
+    if (!(RegExp(r'\D').hasMatch(bottomLeftScanResult['collectorNumber']) ||
         bottomLeftScanResult['setCode'].length != 3 ||
         bottomLeftScanResult['language'].length != 2)) {
       log('Scan result : $bottomLeftScanResult');

@@ -6,8 +6,8 @@ Widget ManaCost(String manaCost) {
   List<String> manaCosts = manaCost.split(RegExp(r'{|}'));
   manaCosts.removeWhere((element) => element.isEmpty);
   for (var element in manaCosts) {
-    // change '/' to ':'
-    element = element.replaceAll('/', ':');
+    // change '/' to '_'
+    element = element.replaceAll('/', '_');
     // check if elemeent exists in mana_costs folder
 
     manaCostWidgets.add(
