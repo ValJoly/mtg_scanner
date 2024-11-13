@@ -87,7 +87,10 @@ Widget smallcardListTile(BuildContext context, mtg.Card card) {
       child: ListTile(
         title: Text(card.printedName ?? card.name),
         subtitle: ManaCost(card.manaCost),
-        leading: Image.network(card.imageUris.normal),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(2.0),
+          child: Image.network(card.imageUris.normal),
+        ),
         trailing: GestureDetector(
           child: const Icon(Icons.add_circle_outline_rounded),
           onTap: () async {
@@ -123,7 +126,10 @@ Widget bigcardWidget(BuildContext context, mtg.Card card) {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(card.imageUris.normal),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12.0),
+              child: Image.network(card.imageUris.normal),
+            ),
             Text(
               card.printedName ?? card.name,
               textAlign: TextAlign.left,

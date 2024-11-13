@@ -157,7 +157,9 @@ class _CollectionCardState extends State<CollectionCard> {
           borderRadius: BorderRadius.circular(12.0),
         ),
         child: ListTile(
-          leading: Image.network(widget.card.card?.imageUris.normal ?? ''),
+          leading: ClipRRect(
+              borderRadius: BorderRadius.circular(2.0),
+              child: Image.network(widget.card.card?.imageUris.normal ?? '')),
           title: Text(
               widget.card.card?.printedName ?? widget.card.card?.name ?? ''),
           subtitle: Text('Quantity: ${widget.card.quantity}'),

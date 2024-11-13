@@ -9,14 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^1.2.2
-  # ocr_scan_text: ^1.3.1
   ocr_scan_text: 
     path: ./sources/ocr_scan_text
-  permission_handler: ^11.3.1
-  scryfall_api: ^2.0.0
   edge_detection:
     path: ./sources/edge_detection
+  http: ^1.2.2
+  # ocr_scan_text: ^1.3.1
+  permission_handler: ^11.3.1
+  scryfall_api: ^2.0.0
   path_provider: ^2.1.4
   path: ^1.9.0
   image: ^4.3.0

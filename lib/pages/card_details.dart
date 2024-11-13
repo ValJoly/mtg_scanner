@@ -34,7 +34,10 @@ class _CardDetailsState extends State<CardDetails> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Image.network(widget.card.imageUris.large),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(widget.card.imageUris.large),
+              ),
             ),
             Text(widget.card.printedName ?? widget.card.name),
             ExpansionTile(
@@ -113,9 +116,13 @@ class _CardDetailsState extends State<CardDetails> {
                                           )
                                         : Stack(
                                             children: [
-                                              Image.network(
-                                                print.imageUris!.normal!,
-                                                fit: BoxFit.fitHeight,
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Image.network(
+                                                  print.imageUris!.normal!,
+                                                  fit: BoxFit.fitHeight,
+                                                ),
                                               ),
                                               Positioned(
                                                 bottom: 0,

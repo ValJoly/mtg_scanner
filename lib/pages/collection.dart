@@ -75,34 +75,13 @@ class _CollectionState extends State<Collection>
                   await CollectionManager.instance.getCollection();
                   setState(() {});
                 },
-                child: ListView.builder(
-                  itemCount: _collectionSearchTextController.text.isEmpty
-                      ? CollectionManager.instance.collection.length
-                      : CollectionManager.instance.collection.where((element) {
-                          // filter the collection based on the search text in the card name, printedName, oracleText, set name or collector number
-                          final card = element.card;
-                          if (card == null) {
-                            return false;
-                          }
-                          return card.name.toLowerCase().contains(_collectionSearchTextController.text.toLowerCase()) ||
-                              (card.printedName ?? '').toLowerCase().contains(
-                                  _collectionSearchTextController.text
-                                      .toLowerCase()) ||
-                              (card.oracleText ?? '').toLowerCase().contains(
-                                  _collectionSearchTextController.text
-                                      .toLowerCase()) ||
-                              card.setName.toLowerCase().contains(
-                                  _collectionSearchTextController.text
-                                      .toLowerCase()) ||
-                              card.collectorNumber.toLowerCase().contains(
-                                  _collectionSearchTextController.text
-                                      .toLowerCase());
-                        }).length,
-                  itemBuilder: (context, index) {
-                    final card = _collectionSearchTextController.text.isEmpty
-                        ? CollectionManager.instance.collection[index]
+                child: Scrollbar(
+                  child: ListView.builder(
+                    itemCount: _collectionSearchTextController.text.isEmpty
+                        ? CollectionManager.instance.collection.length
                         : CollectionManager.instance.collection
                             .where((element) {
+                            // filter the collection based on the search text in the card name, printedName, oracleText, set name or collector number
                             final card = element.card;
                             if (card == null) {
                               return false;
@@ -131,14 +110,50 @@ class _CollectionState extends State<Collection>
                                 card.collectorNumber.toLowerCase().contains(
                                     _collectionSearchTextController.text
                                         .toLowerCase());
-                          }).elementAt(index);
-                    return CollectionCard(
-                      card: card,
-                    );
-                  },
-                  // dismiss the keyboard when scrolling
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
+                          }).length,
+                    itemBuilder: (context, index) {
+                      final card = _collectionSearchTextController.text.isEmpty
+                          ? CollectionManager.instance.collection[index]
+                          : CollectionManager.instance.collection
+                              .where((element) {
+                              final card = element.card;
+                              if (card == null) {
+                                return false;
+                              }
+                              return card
+                                      .name
+                                      .toLowerCase()
+                                      .contains(
+                                          _collectionSearchTextController
+                                              .text
+                                              .toLowerCase()) ||
+                                  (card.printedName ?? '').toLowerCase().contains(
+                                      _collectionSearchTextController
+                                          .text
+                                          .toLowerCase()) ||
+                                  (card
+                                              .oracleText ??
+                                          '')
+                                      .toLowerCase()
+                                      .contains(
+                                          _collectionSearchTextController
+                                              .text
+                                              .toLowerCase()) ||
+                                  card.setName.toLowerCase().contains(
+                                      _collectionSearchTextController.text
+                                          .toLowerCase()) ||
+                                  card.collectorNumber.toLowerCase().contains(
+                                      _collectionSearchTextController.text
+                                          .toLowerCase());
+                            }).elementAt(index);
+                      return CollectionCard(
+                        card: card,
+                      );
+                    },
+                    // dismiss the keyboard when scrolling
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                  ),
                 ),
               ),
             ),
