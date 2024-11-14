@@ -18,14 +18,16 @@ class SharedPrefs {
     return _prefs!;
   }
 
-  Future<void> setSyncPath(String path) async {
-    final prefs = await this.prefs;
-    await prefs.setString('dbPath', path);
+  final String tokenKey = 'token';
+
+  Future<void> setToken(String value) async {
+    final prefs = await this.prefs; // get the instance of SharedPreferences
+    await prefs.setString(tokenKey, value);
   }
 
-  Future<String?> getSyncPath() async {
+  Future<String?> getToken() async {
     final prefs = await this.prefs;
-    return prefs.getString('dbPath');
+    return prefs.getString(tokenKey);
   }
 
   Future<void> clear() async {

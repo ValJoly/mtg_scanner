@@ -1,7 +1,5 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:mtg_scanner/database/database.dart';
 import 'package:mtg_scanner/database/logic.dart';
 import 'package:mtg_scanner/models/cards_list.dart' as mtg;
-import 'package:permission_handler/permission_handler.dart';
 
 import '../database/shared_preferences.dart';
 
@@ -31,23 +28,85 @@ class _SettingsState extends State<Settings>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        // log db path
+        log('DB path: ${CardDB.instance.dbPath}');
+      }),
       body: Stack(
         children: [
           ListView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
-              // export collection to file
+              //  login to sync
               ListTile(
-                title: const Text('Choose sync location'),
-                trailing: const Icon(Icons.upload_file),
-                onTap: syncPath,
+                title: const Text('login to sync'),
+                trailing: const Icon(Icons.login_rounded),
+                onTap: () async {
+                  var token = await context.push('/login');
+                  if (token != null) {
+                    log('Token received from page: $token');
+                    SharedPrefs.instance.setToken(token as String);
+                  }
+                },
               ),
-              // import collection from file
+              //register to sync
               ListTile(
-                title: const Text('Import collection'),
-                trailing: const Icon(Icons.download_rounded),
-                onTap: importDB,
+                title: const Text('register to sync'),
+                trailing: const Icon(Icons.app_registration),
+                onTap: () async {
+                  var token = await context.push('/register');
+                  if (token == null) {
+                    return;
+                  }
+                  if (token == 'user already exists') {
+                    log('User already exists');
+                    context.push('/show_dialog/Error/User already exists');
+                  } else {
+                    log('Token received from page: $token');
+                    SharedPrefs.instance.setToken(token as String);
+                  }
+                },
               ),
+              // logout
+              ListTile(
+                title: const Text('logout'),
+                trailing: const Icon(Icons.logout),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Logout'),
+                        content: const Text(
+                            'Are you sure you want to logout of your account?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              context.pop();
+                            },
+                            child: const Text('Annuler'),
+                          ), // cancel
+                          TextButton(
+                            onPressed: () {
+                              context.pop();
+                              SharedPrefs.instance.clear();
+                            },
+                            child: const Text('Confirmer'),
+                          ), // confirm
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+              // Sync collection
+
+              if (SharedPrefs.instance.getToken() != null)
+                ListTile(
+                  title: const Text('Sync collection'),
+                  trailing: const Icon(Icons.sync),
+                  onTap: syncDB,
+                ),
               ListTile(
                 title: const Column(
                   mainAxisSize: MainAxisSize.min,
@@ -138,53 +197,7 @@ class _SettingsState extends State<Settings>
     );
   }
 
-  Future<void> syncPath() async {
-    var storageStatus = await Permission.storage.status;
-    if (storageStatus != PermissionStatus.granted) {
-      storageStatus = await Permission.storage.request();
-      if (storageStatus != PermissionStatus.granted) {
-        return;
-      }
-    }
-    log('Exporting collection');
-    log('Storage permission status: $storageStatus');
-
-    // final Directory appDocumentsDir =
-    //     await getApplicationDocumentsDirectory();
-
-    // log(appDocumentsDir.path);
-    // copyCollectionTo(appDocumentsDir.path);
-
-    // var syncPath = await FilePicker.platform.getDirectoryPath();
-    // if (syncPath == null) {
-    //   return;
-    // }
-    log('Selected sync path: $syncPath');
-    await FilePicker.platform.saveFile(
-      dialogTitle: 'Save collection',
-      fileName: 'mtg_card.db',
-      bytes: File((await CardDB.instance.db).path).readAsBytesSync(),
-      // type: FileType.custom,
-      // allowedExtensions: ['db'],
-    );
-  }
-
-  Future<void> importDB() async {
-    FilePickerResult? dpath = await FilePicker.platform.pickFiles();
-    if (dpath == null) {
-      return;
-    }
-    if (dpath.files.isEmpty) {
-      return;
-    }
-    if (dpath.files.first.path == null) {
-      return;
-    }
-    log('Selected file path: ${dpath.files.first.path}');
-
-    // store the path in shared preferences
-    SharedPrefs.instance.setSyncPath(dpath.files.first.path!);
-  }
+  Future<void> syncDB() async {}
 
   Future<void> _parseData(String bulkData) async {
     final List<mtg.CardQuantity> bulkCardList = [];

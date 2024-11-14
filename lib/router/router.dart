@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtg_scanner/layout/layout_scaffold.dart';
 import 'package:mtg_scanner/models/cards_list.dart' as mtg;
+import 'package:mtg_scanner/pages/auth/login.dart';
+import 'package:mtg_scanner/pages/auth/register.dart';
 import 'package:mtg_scanner/pages/card_details.dart';
 import 'package:mtg_scanner/pages/collection.dart';
 import 'package:mtg_scanner/pages/detect_edge.dart';
@@ -67,6 +69,10 @@ final router = GoRouter(
       path: Routes.cardDetails,
       builder: (context, state) => CardDetails(state.extra as mtg.Card),
     ),
+    GoRoute(path: Routes.login, builder: (context, state) => const Login()),
+    GoRoute(
+        path: Routes.register, builder: (context, state) => const Register()),
+
     GoRoute(
         path: Routes.showDialog,
         pageBuilder: (context, state) {
