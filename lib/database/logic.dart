@@ -24,7 +24,7 @@ class DBLogic {
         // create a card quantity object from the record value
         var tmp2 = CardQuantity.fromJson(record.value as Map<String, dynamic>);
         // log('card id: ${tmp2.card?.id}');
-        return tmp2.card?.id == card.card?.id;
+        return tmp2.card.id == card.card.id;
       }),
     );
     final snapshot = await _cards.findFirst(await db, finder: finder);
@@ -41,12 +41,12 @@ class DBLogic {
   }
 
   Future update(CardQuantity card) async {
-    if (card.card?.id == null) {
-      throw Exception('Cannot update card without id');
-    }
+    // if (card.card.id == null) {
+    //   throw Exception('Cannot update card without id');
+    // }
     // check if quantity is 0, if so, delete the card
     if (card.quantity <= 0) {
-      await delete(card.card!);
+      await delete(card.card);
       log('Card quantity is 0, deleting card');
       return;
     }
@@ -60,7 +60,7 @@ class DBLogic {
       // create a card quantity object from the record value
       var tmp2 = CardQuantity.fromJson(record.value as Map<String, dynamic>);
       // log('card id: ${tmp2.card?.id}');
-      return tmp2.card?.id == card.card?.id;
+      return tmp2.card.id == card.card.id;
     }));
 
     await _cards.update(
@@ -82,7 +82,7 @@ class DBLogic {
         // create a card quantity object from the record value
         var tmp2 = CardQuantity.fromJson(record.value as Map<String, dynamic>);
         // log('card id: ${tmp2.card?.id}');
-        return tmp2.card?.id == card.id;
+        return tmp2.card.id == card.id;
       }),
     );
 
@@ -104,7 +104,7 @@ class DBLogic {
         // create a card quantity object from the record value
         var tmp2 = CardQuantity.fromJson(record.value as Map<String, dynamic>);
         // log('card id: ${tmp2.card?.id}');
-        return tmp2.card?.id == id;
+        return tmp2.card.id == id;
       }),
     );
 
@@ -135,7 +135,7 @@ class DBLogic {
         // create a card quantity object from the record value
         var tmp2 = CardQuantity.fromJson(record.value as Map<String, dynamic>);
         // log('card id: ${tmp2.card?.id}');
-        return tmp2.card?.id == id;
+        return tmp2.card.id == id;
       }),
     );
     final snapshot = await _cards.findFirst(await db, finder: finder);
@@ -148,7 +148,7 @@ class DBLogic {
   Future<List<CardQuantity>> getCardsBySet(String set) async {
     final finder = Finder(
         filter: Filter.custom(
-            (record) => (record.value as CardQuantity).card?.CardSet == set));
+            (record) => (record.value as CardQuantity).card.CardSet == set));
     final snapshot = await _cards.find(await db, finder: finder);
     return snapshot.map((e) => CardQuantity.fromJson(e.value)).toList();
   }

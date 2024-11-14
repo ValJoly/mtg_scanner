@@ -83,9 +83,9 @@ class _CollectionState extends State<Collection>
                             .where((element) {
                             // filter the collection based on the search text in the card name, printedName, oracleText, set name or collector number
                             final card = element.card;
-                            if (card == null) {
-                              return false;
-                            }
+                            // if (card == null) {
+                            //   return false;
+                            // }
                             return card
                                     .name
                                     .toLowerCase()
@@ -117,9 +117,9 @@ class _CollectionState extends State<Collection>
                           : CollectionManager.instance.collection
                               .where((element) {
                               final card = element.card;
-                              if (card == null) {
-                                return false;
-                              }
+                              // if (card == null) {
+                              //   return false;
+                              // }
                               return card
                                       .name
                                       .toLowerCase()

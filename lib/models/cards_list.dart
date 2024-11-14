@@ -34,11 +34,11 @@ class CardsList {
 }
 
 class CardQuantity {
-  Card? card;
+  Card card;
   int quantity;
 
   CardQuantity({
-    this.card,
+    required this.card,
     required this.quantity,
   });
 
@@ -53,7 +53,7 @@ class CardQuantity {
       );
 
   Map<String, dynamic> toJson() => {
-        "card": card?.toJson(),
+        "card": card.toJson(),
         "quantity": quantity,
       };
 }

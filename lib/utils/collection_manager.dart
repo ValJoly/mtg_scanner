@@ -24,7 +24,7 @@ class CollectionManager {
     log('Removing card from collection');
     // Update the collectionNotifier
     collectionNotifier.value = collectionNotifier.value
-        .where((element) => element.card?.id != card.card?.id)
+        .where((element) => element.card.id != card.card.id)
         .toList();
     if (context != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -53,7 +53,7 @@ class CollectionManager {
     log('Adding card to collection');
     // verify if the card is already in the collection
     final cardIndex = collectionNotifier.value.indexWhere(
-      (element) => element.card?.id == cardQuantity.card?.id,
+      (element) => element.card.id == cardQuantity.card.id,
     );
     if (cardIndex != -1) {
       // if the card is already in the collection, increase the quantity

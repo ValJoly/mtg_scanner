@@ -142,7 +142,7 @@ class _CollectionCardState extends State<CollectionCard> {
               onTap: () async {
                 HapticFeedback.mediumImpact();
                 // Delete the card from the database
-                await DBLogic().delete(widget.card.card!);
+                await DBLogic().delete(widget.card.card);
                 // Update the UI
                 await CollectionManager.instance.removeCard(widget.card);
                 setState(() {});
@@ -159,11 +159,11 @@ class _CollectionCardState extends State<CollectionCard> {
         child: ListTile(
           leading: ClipRRect(
               borderRadius: BorderRadius.circular(2.0),
-              child: Image.network(widget.card.card?.imageUris.normal ?? '')),
+              child: Image.network(widget.card.card.imageUris.normal)),
           title: Text(
-              widget.card.card?.printedName ?? widget.card.card?.name ?? ''),
+              widget.card.card.printedName ?? widget.card.card.name),
           subtitle: Text('Quantity: ${widget.card.quantity}'),
-          trailing: ManaCost(widget.card.card?.manaCost ?? ''),
+          trailing: ManaCost(widget.card.card.manaCost),
           onTap: () {
             // vibrate the device to give feedback
             HapticFeedback.mediumImpact();
